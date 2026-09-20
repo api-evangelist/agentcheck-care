@@ -1,0 +1,15 @@
+generated: '2026-09-19'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: agentcheck.care
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov 29 08:12:11 2026 GMT
+  hsts: null
+domains:
+- domain: agentcheck.care
+  dnssec: false
+  caa: []
+  spf: false
+  dmarc: false

@@ -1,0 +1,65 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  https://agentcheck.care/privacy and https://agentcheck.care/terms (both "Last updated: March 9, 2026"), the
+  artifacts harvested this run (well-known/, security/, lifecycle/, conformance/), and live probes of the
+  conventional paths listed under probed[]. Harvest only - whether any regime applies is decided by the Kin
+  Score regime map, not here.
+signals:
+  data_subject_request:
+    present: true
+    channel: email (hello (at) agentcheck.care via the privacy page's contact link)
+    self_service: false
+    rights_named:
+    - access (via the report magic link)
+    - deletion (on request)
+    - portability (HTML report via magic link; PDF export "planned")
+    - rectification, restriction of processing, complaint to a supervisory authority (EU/EEA residents, GDPR)
+    stated_period: within 7 business days
+    evidence: https://agentcheck.care/privacy
+    note: Section 3.2 - "We do not currently offer self-service report deletion. If you need a report deleted, contact us and we will delete it within 7 business days." Section 5 enumerates the rights above.
+  subprocessors:
+    present: true
+    format: inline list in the privacy policy, not a standalone dated table
+    dated: '2026-03-09'
+    entries:
+    - name: Stripe
+      purpose: payment processing; receives email and payment details directly
+    - name: Cloudflare
+      purpose: CDN, DDoS protection, DNS; may set security cookies
+    - name: Google (Gemini API)
+      purpose: AI evaluation engine; checkup conversation data is sent for analysis on the paid API tier, stated not to be used for model training
+    evidence: https://agentcheck.care/privacy
+    note: Section 4 names each third party with its purpose and links each one's privacy policy; there is no change-notification mechanism for the list.
+observations:
+  ai_processing_disclosure:
+    note: >-
+      Privacy 4.3 discloses that conversation data is processed by Google's Gemini API under the paid tier
+      with training excluded. This is a processor disclosure inside the privacy policy, not an AI
+      transparency page or model card, so it is not recorded as an ai_transparency signal.
+  age_statement:
+    note: 'Privacy 7 - "not directed at individuals under 16". A statement of intended audience, not an age-assurance mechanism; not recorded as age_assurance.'
+  security_contact:
+    note: 'Privacy 6 - "If you discover a security vulnerability, please report it to us" with the contact link. No security.txt, no policy page, no bounty; probe-security-programs.py found nothing to write.'
+  retention:
+    note: Reports retained indefinitely unless deletion is requested (privacy 3.3); customer-supplied API keys held in memory only (1.3).
+  data_residency:
+    note: Not stated. Origin is behind Cloudflare; governing law is Delaware, United States (terms 9).
+  global_privacy_control:
+    note: Not mentioned. The policy states no tracking pixels, ad networks or third-party analytics and no application cookies; GPC honouring is neither claimed nor tested.
+  sbom: {note: none published}
+  support_lifetime: {note: none published; terms 7 says tests and scoring may change at any time}
+  accessibility_conformance: {note: no VPAT or conformance report}
+  transparency_report: {note: none}
+  incident_notification: {note: no stated commitment}
+  exit_assistance: {note: none beyond the HTML report and planned PDF export}
+probed:
+- {url: 'https://agentcheck.care/accessibility', status: 404}
+- {url: 'https://agentcheck.care/legal/subprocessors', status: 404}
+- {url: 'https://agentcheck.care/legal/dpa', status: 404}
+- {url: 'https://agentcheck.care/privacy/requests', status: 404}
+- {url: 'https://agentcheck.care/transparency', status: 404}
+- {url: 'https://agentcheck.care/security/sbom', status: 404}
+- {url: 'https://agentcheck.care/.well-known/security.txt', status: 404}
+- {url: 'https://agentcheck.care/privacy', status: 200}
+- {url: 'https://agentcheck.care/terms', status: 200}

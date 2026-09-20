@@ -64,5 +64,20 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-AgentCheck is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
+AgentCheck (agentcheck.care) is an AI-agent diagnostic service: give it the URL of a bot — an A2A agent or an OpenAI-compatible chat endpoint — and it runs synthetic-persona conversations, prompt-injection and PII-leakage tests, hallucination and brand-alignment checks, and returns a scored report by magic link. Free scan with no login; paid one-off tiers at $10, $25 and $75 via Stripe.
+
+## What this profile holds (enrichment pass 2026-09-19)
+
+| Surface | Where | How we got it |
+|---|---|---|
+| OpenAPI 3.1.0, 35 operations | `openapi/` (verbatim copy in `openapi/_original/`) | fetched from https://agentcheck.care/openapi.json (200) |
+| A2A agent card, 0.3.0, **conformant**, 2 skills | `a2a/` | fetched from https://agentcheck.care/.well-known/agent-card.json (200) |
+| Tiers and pricing | `plans/` | read from https://agentcheck.care/api/tiers (200) |
+| Free-scan quota, rate limits | `rate-limits/` | terms of service + live `/api/free-scans` |
+| Authentication, errors, conventions, lifecycle, data model | respective dirs | derived from the contract and live anonymous probes |
+| Well-known surface | `well-known/` | 42 probes on 3 hosts; only the agent card is served |
+| MCP | `mcp/` | none published — derived candidate only, `deployment.mode: none` |
+| Packages / SDKs | `packages/` | none — every registry hit for "agentcheck" is another project |
+| Agent skills | `skills/` | authored by API Evangelist, grounded in the spec's operationIds |
+
 - https://agentcheck.care/

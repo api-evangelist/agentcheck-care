@@ -1,0 +1,79 @@
+generated: '2026-09-19'
+method: derived
+status: candidate
+source: openapi/agentcheck-care-openapi.yml
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: none
+  verified: derived
+search_result:
+  official_hosted_server: none
+  probes:
+  - url: https://agentcheck.care/mcp
+    method: POST tools/list
+    status: 404
+    body: '{"detail":"Not Found"}'
+  - url: https://agentcheck.care/api/mcp
+    method: POST tools/list
+    status: 404
+  - url: https://mcp.agentcheck.care/mcp
+    method: POST tools/list
+    status: 0
+    note: host does not resolve
+  site_search: The home page, terms, privacy, Swagger UI and agent card mention no MCP server; npm has no @agentcheck package from this company.
+  third_party: []
+  finding: >-
+    AgentCheck's agent surface is A2A, not MCP - a conformant 0.3.0 agent card with two skills at
+    https://agentcheck.care/a2a (see a2a/agentcheck-care-a2a.yml). Nobody ships an MCP server for this
+    API. The tool list below is a CANDIDATE derived one-tool-per-public-operation from the OpenAPI so a
+    future crosswalk has something to bind to; AgentCheck does not publish it and no endpoint exists.
+server:
+  name: agentcheck
+  transport: http
+  url: null
+tools:
+- name: get_tiers
+  description: List the four checkup tiers (free, basic, full, enterprise) with price and included test quotas.
+  source_operation: openapi/agentcheck-care-openapi.yml#get_tiers_api_tiers_get
+  auth: none
+- name: get_free_scan_pool
+  description: Read the shared weekly free-scan pool - used, max, remaining and seconds until reset.
+  source_operation: openapi/agentcheck-care-openapi.yml#free_scans_endpoint_api_free_scans_get
+  auth: none
+- name: validate_bot
+  description: Check whether a URL is safe and points at a reachable A2A agent or OpenAI-compatible chat API before starting a checkup.
+  source_operation: openapi/agentcheck-care-openapi.yml#validate_bot_api_validate_bot_post
+  auth: none
+- name: start_free_checkup
+  description: Start a free-tier checkup of a bot (CheckupRequest - bot_type, bot_url, optional system_prompt, email, industry). Paid tiers go through create_checkout.
+  source_operation: openapi/agentcheck-care-openapi.yml#start_checkup_api_checkup_post
+  auth: none
+- name: create_checkout
+  description: Create a Stripe Checkout session for a paid tier (CheckoutRequest) and return the redirect URL; testing starts after payment.
+  source_operation: openapi/agentcheck-care-openapi.yml#create_checkout_api_checkout_post
+  auth: none
+- name: stream_checkup_progress
+  description: Server-sent-events stream of a running checkup's progress by checkup_id.
+  source_operation: openapi/agentcheck-care-openapi.yml#stream_progress_api_checkup__checkup_id__stream_get
+  auth: none
+- name: get_checkup_report
+  description: Fetch the scored report for a completed checkup by checkup_id.
+  source_operation: openapi/agentcheck-care-openapi.yml#get_report_api_checkup__checkup_id__report_get
+  auth: none
+- name: get_exam_status
+  description: Poll the status of an exam-mode session (the mode where the customer's bot calls AgentCheck's generated OpenAI-compatible URL).
+  source_operation: openapi/agentcheck-care-openapi.yml#exam_status_exam__token__status_get
+  auth: exam token in path
+- name: get_public_stats
+  description: Aggregate public scan statistics for the landing page; hidden below a scan-count threshold.
+  source_operation: openapi/agentcheck-care-openapi.yml#get_public_stats_api_stats_public_get
+  auth: none
+- name: get_health
+  description: Service liveness and version.
+  source_operation: openapi/agentcheck-care-openapi.yml#health_api_health_get
+  auth: none
+excluded_operations:
+  note: Not proposed as tools - HTML pages (/, /privacy, /terms, /checkup/{id}, /exam/{token}, /report/{id}), Stripe redirect and webhook handlers, the trailing-slash duplicates, the operator-only internal stats, and the A2A/agent-card operations which are already an agent surface.

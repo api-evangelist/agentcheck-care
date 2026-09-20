@@ -1,0 +1,830 @@
+openapi: 3.1.0
+info:
+  title: AgentCheckup
+  version: 0.1.0
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist
+    from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+x-api-evangelist:
+  harvested: '2026-09-19'
+  source: https://agentcheck.care/openapi.json
+  http_status: 200
+  verbatim_copy: openapi/_original/agentcheck-care-openapi.json
+  changes:
+  - servers[] added (see description)
+  - converted JSON to YAML; paths, components and operationIds untouched
+paths:
+  /exam/{token}/v1/chat/completions:
+    post:
+      summary: Chat Completions
+      description: 'OpenAI-compatible chat endpoint that bridges bot answers to the orchestrator.
+
+
+        First request: bot connects, we return the first question (no inbox push).
+
+        Subsequent: bot''s answer goes to inbox, next question returned from outbox.
+
+        On RESET: ack the adapter, clear history, wait for next question.
+
+        On COMPLETE: final message with report link returned.'
+      operationId: chat_completions_exam__token__v1_chat_completions_post
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /exam/{token}:
+    get:
+      summary: Exam Page
+      description: Show exam instructions with endpoint URL, code examples, and countdown.
+      operationId: exam_page_exam__token__get
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /exam/{token}/status:
+    get:
+      summary: Exam Status
+      description: JSON status for polling from the instructions page.
+      operationId: exam_status_exam__token__status_get
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /exam/{token}/relaunch:
+    post:
+      summary: Relaunch Exam
+      description: Create a new exam session from an expired paid one, reusing same params.
+      operationId: relaunch_exam_exam__token__relaunch_post
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /.well-known/agent-card.json:
+    get:
+      summary: Agent Card
+      description: Serve the A2A Agent Card for discovery.
+      operationId: agent_card__well_known_agent_card_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /a2a:
+    post:
+      summary: A2A Endpoint
+      description: 'Handle A2A JSON-RPC 2.0 message/send requests.
+
+
+        This is the main bot-to-bot entry point. External agents send
+
+        message/send with a text message describing what they want.'
+      operationId: a2a_endpoint_a2a_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/health:
+    get:
+      summary: Health
+      operationId: health_api_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/free-scans:
+    get:
+      summary: Free Scans Endpoint
+      description: Return weekly free scan pool status (shared across all users).
+      operationId: free_scans_endpoint_api_free_scans_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/free-scan-status:
+    get:
+      summary: Free Scan Status
+      operationId: free_scan_status_api_free_scan_status_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/stats/public:
+    get:
+      summary: Get Public Stats
+      description: 4 numbers for the landing page. No auth. Hidden below threshold.
+      operationId: get_public_stats_api_stats_public_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/stats/internal:
+    get:
+      summary: Get Internal Stats
+      description: Full analytics breakdown. Requires ADMIN_STATS_TOKEN.
+      operationId: get_internal_stats_api_stats_internal_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/validate-bot/:
+    post:
+      summary: Validate Bot
+      description: Check if a URL is safe and points to a valid bot (A2A or Chat API).
+      operationId: validate_bot_api_validate_bot__post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/validate-bot:
+    post:
+      summary: Validate Bot
+      description: Check if a URL is safe and points to a valid bot (A2A or Chat API).
+      operationId: validate_bot_api_validate_bot_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/checkup/:
+    get:
+      summary: Checkup Get Redirect
+      description: Catch stray GETs (e.g. from Cloudflare prefetch) — redirect to homepage.
+      operationId: checkup_get_redirect_api_checkup__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    post:
+      summary: Start Checkup
+      description: Start a checkup. Free tier only — paid tiers go through /api/checkout.
+      operationId: start_checkup_api_checkup__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckupRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/checkup:
+    get:
+      summary: Checkup Get Redirect
+      description: Catch stray GETs (e.g. from Cloudflare prefetch) — redirect to homepage.
+      operationId: checkup_get_redirect_api_checkup_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    post:
+      summary: Start Checkup
+      description: Start a checkup. Free tier only — paid tiers go through /api/checkout.
+      operationId: start_checkup_api_checkup_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckupRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/checkout:
+    get:
+      summary: Upgrade Checkout
+      description: 'Create a Stripe checkout for upgrading an existing free scan.
+
+
+        The upgrade link carries the checkup_id from the free report, so the
+
+        user does NOT have to re-enter their bot URL. We look up the original
+
+        checkup data and create a new checkout session with the same bot info.'
+      operationId: upgrade_checkout_api_checkout_get
+      parameters:
+      - name: tier
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Tier
+      - name: checkup_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      summary: Create Checkout
+      description: Create a Stripe Checkout session and return the redirect URL.
+      operationId: create_checkout_api_checkout_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/checkout/:
+    post:
+      summary: Create Checkout
+      description: Create a Stripe Checkout session and return the redirect URL.
+      operationId: create_checkout_api_checkout__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/checkout/success:
+    get:
+      summary: Checkout Success
+      description: Handle Stripe redirect after successful payment. Launches the pipeline.
+      operationId: checkout_success_api_checkout_success_get
+      parameters:
+      - name: session_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: checkup_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/checkout/cancel:
+    get:
+      summary: Checkout Cancel
+      description: Handle Stripe redirect after cancelled payment.
+      operationId: checkout_cancel_api_checkout_cancel_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/stripe-webhook/:
+    post:
+      summary: Stripe Webhook
+      description: Handle Stripe webhook events (payment confirmation).
+      operationId: stripe_webhook_api_stripe_webhook__post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/stripe-webhook:
+    post:
+      summary: Stripe Webhook
+      description: Handle Stripe webhook events (payment confirmation).
+      operationId: stripe_webhook_api_stripe_webhook_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/credits/balance:
+    get:
+      summary: Credit Balance
+      description: Get credit balance for an API key.
+      operationId: credit_balance_api_credits_balance_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/checkup/{checkup_id}/stream:
+    get:
+      summary: Stream Progress
+      operationId: stream_progress_api_checkup__checkup_id__stream_get
+      parameters:
+      - name: checkup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/tiers:
+    get:
+      summary: Get Tiers
+      operationId: get_tiers_api_tiers_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/checkup/{checkup_id}/report:
+    get:
+      summary: Get Report
+      operationId: get_report_api_checkup__checkup_id__report_get
+      parameters:
+      - name: checkup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /report/{checkup_id}:
+    get:
+      summary: Magic Link Report
+      description: Serve a persisted report via magic link token + optional access code.
+      operationId: magic_link_report_report__checkup_id__get
+      parameters:
+      - name: checkup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      - name: token
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Token
+      - name: code
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Code
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Format
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /checkup/{checkup_id}:
+    get:
+      summary: Checkup Progress Page
+      description: Serve an HTML page that connects to the SSE stream for live progress.
+      operationId: checkup_progress_page_checkup__checkup_id__get
+      parameters:
+      - name: checkup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /robots.txt:
+    get:
+      summary: Robots Txt
+      description: Serve robots.txt.
+      operationId: robots_txt_robots_txt_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /sitemap.xml:
+    get:
+      summary: Sitemap Xml
+      description: Serve sitemap.xml.
+      operationId: sitemap_xml_sitemap_xml_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /privacy:
+    get:
+      summary: Privacy Page
+      description: Serve privacy policy page.
+      operationId: privacy_page_privacy_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/html:
+              schema:
+                type: string
+  /terms:
+    get:
+      summary: Terms Page
+      description: Serve terms of service page.
+      operationId: terms_page_terms_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/html:
+              schema:
+                type: string
+  /:
+    get:
+      summary: Serve Index
+      description: Serve the unified landing page.
+      operationId: serve_index__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/html:
+              schema:
+                type: string
+components:
+  schemas:
+    CheckoutRequest:
+      properties:
+        bot_type:
+          type: string
+          title: Bot Type
+          default: a2a
+        bot_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bot Url
+        bot_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bot Name
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        api_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Key
+        website_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Website Url
+        system_prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Prompt
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        tier:
+          type: string
+          title: Tier
+          default: basic
+        view:
+          type: string
+          title: View
+          default: friendly
+        owner_perception_enabled:
+          type: boolean
+          title: Owner Perception Enabled
+          default: false
+        owner_perception_mode:
+          type: string
+          title: Owner Perception Mode
+          default: company
+        owner_known_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Known Info
+        owner_private_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Private Info
+        owner_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Name
+      type: object
+      title: CheckoutRequest
+      description: Request body for POST /api/checkout (Stripe).
+    CheckupRequest:
+      properties:
+        bot_type:
+          type: string
+          title: Bot Type
+          default: a2a
+        bot_url:
+          type: string
+          title: Bot Url
+          default: ''
+        bot_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bot Name
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        api_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Key
+        website_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Website Url
+        system_prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Prompt
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        tier:
+          type: string
+          title: Tier
+          default: free
+        view:
+          type: string
+          title: View
+          default: friendly
+        bot_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bot Description
+        industry:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Industry
+        sample_questions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sample Questions
+        owner_perception_enabled:
+          type: boolean
+          title: Owner Perception Enabled
+          default: false
+        owner_perception_mode:
+          type: string
+          title: Owner Perception Mode
+          default: company
+        owner_known_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Known Info
+        owner_private_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Private Info
+        owner_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Name
+      type: object
+      title: CheckupRequest
+      description: Request body for POST /api/checkup.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

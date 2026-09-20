@@ -1,0 +1,94 @@
+generated: '2026-09-19'
+method: probed
+source: https://agentcheck.care/api/tiers
+docs: https://agentcheck.care/#pricing
+plan_count: 4
+currency: USD
+model: One-off per-checkup purchase via Stripe Checkout; no subscription, no login, no account
+note: >-
+  Prices and included quotas were read from the machine-readable tier catalog at GET /api/tiers
+  (HTTP 200, application/json, anonymous) on 2026-09-19 and cross-checked against the home page #pricing
+  section and the two A2A skill descriptions, which state the same three paid prices. The tier ids
+  (free, basic, full, enterprise) are the values POST /api/checkup and POST /api/checkout accept in the
+  `tier` field. There is no enterprise "contact us" tier and no volume pricing; "enterprise" is simply the
+  id of the $75 Deep Check. Refund terms come from https://agentcheck.care/terms section 3.3.
+plans:
+- id: free
+  name: Free Scan
+  price: 0.00
+  currency: USD
+  period: one-time
+  unit: 1 checkup
+  included:
+  - 1 persona(s)
+  - 4 turns each
+  - 1 analysis passes
+  - 5 injection tests
+  - PII scan
+  limits:
+    global_pool: 30 free scans per week across all users (terms 3.1; live counter at GET /api/free-scans)
+    per_user: 2 free scans per week (terms 3.1)
+    rate_limits: rate-limits/agentcheck-care-rate-limits.yml
+  onboarding: self-serve, no login (POST /api/checkup with tier "free", or the A2A free-scan skill)
+- id: basic
+  name: Quick Check
+  price: 10.00
+  currency: USD
+  period: one-time
+  unit: 1 checkup
+  included:
+  - 4 persona(s)
+  - 4 turns each
+  - 5 analysis passes
+  - 15 injection tests
+  - PII scan
+  onboarding: Stripe Checkout session from POST /api/checkout (tier "basic"), or the A2A paid-checkup skill which returns a payment link
+- id: full
+  name: Full Check
+  price: 25.00
+  currency: USD
+  period: one-time
+  unit: 1 checkup
+  included:
+  - 8 persona(s)
+  - 5 turns each
+  - 5 analysis passes
+  - 30 injection tests
+  - PII scan
+  - Hallucination detection
+  - Over-refusal testing
+  - Owner perception test
+  onboarding: Stripe Checkout session from POST /api/checkout (tier "full"), or the A2A paid-checkup skill
+  note: Marked "MOST POPULAR / RECOMMENDED" on the home page.
+- id: enterprise
+  name: Deep Check
+  price: 75.00
+  currency: USD
+  period: one-time
+  unit: 1 checkup
+  included:
+  - 15 persona(s)
+  - 6 turns each
+  - 5 analysis passes
+  - 30 injection tests
+  - PII scan
+  - Hallucination detection
+  - Over-refusal testing
+  - Bias & fairness scan
+  - Owner perception test
+  onboarding: Stripe Checkout session from POST /api/checkout (tier "enterprise"), or the A2A paid-checkup skill
+  note: Positioned on the home page as "COMPLIANCE REQUIRED — need a compliance-ready audit report"; the terms (5.4) say reports are not a compliance certification.
+upgrades:
+  note: >-
+    GET /api/checkout?tier=<id>&checkup_id=<free checkup id> creates a paid checkout that reuses the
+    bot details from a completed free scan (302 to Stripe; the spec description states the user does not
+    re-enter the bot URL).
+refunds:
+  policy: Full refund if the checkup fails because of AgentCheck's own error; no refunds for low scores.
+  source: https://agentcheck.care/terms
+  retry: If the bot is unreachable the checkup id stays valid and can be retried on the same payment (terms 3.4); POST /exam/{token}/relaunch recreates an expired paid exam session with the same parameters.
+credits:
+  note: >-
+    GET /api/credits/balance exists ("Get credit balance for an API key") and answers 401 "Missing X-API-Key
+    header" anonymously, so an API-key credit model exists in the code, but no page publishes how to obtain
+    a key or what credits cost. Recorded as observed, not as a plan.

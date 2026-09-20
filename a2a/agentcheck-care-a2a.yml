@@ -1,0 +1,148 @@
+generated: '2026-09-19'
+method: probed
+source: https://agentcheck.care/.well-known/agent-card.json
+card:
+  file: a2a/agentcheck-care-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: agentcheck.care
+  note: >-
+    Served at the A2A 1.0 / RFC 8615 canonical path on the apex host. www.agentcheck.care serves a
+    byte-identical copy, and agentcheck.clinic (named in the privacy policy as a second domain)
+    301-redirects to agentcheck.care/?v=tech, so there is one card and one host. The legacy
+    /.well-known/agent.json path returns a real JSON 404 ({"detail":"Not Found"}) on every host — this
+    origin is a FastAPI app that 404s unknown paths honestly, so there is no SPA catch-all false
+    positive to rule out. Ownership is not in question: the same origin serves the OpenAPI document
+    that declares both GET /.well-known/agent-card.json and POST /a2a as operations, the card's
+    provider.organization is "AgentCheck" with provider.url https://agentcheck.care, and the card
+    url points back at https://agentcheck.care/a2a on the same host.
+  registry_listing: >-
+    Listed on a2aregistry.org (415 agents fetched 2026-09-19); the registry's record names this exact
+    wellKnownURI and is how the company reached the harvest backlog.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://agentcheck.care/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  body_bytes: 1579
+  body_parses_as: JSON object with AgentCard shape (name, url, version, protocolVersion, capabilities, skills all present)
+  cache_control: public, max-age=60, stale-if-error=3600
+  corroborating_probes:
+  - url: https://www.agentcheck.care/.well-known/agent-card.json
+    http_status: 200
+    note: byte-identical to the apex copy
+  - url: https://agentcheck.clinic/.well-known/agent-card.json
+    http_status: 200
+    note: 301 to https://agentcheck.care/.well-known/agent-card.json?v=tech; same document
+  - url: https://agentcheck.care/.well-known/agent.json
+    http_status: 404
+  - url: https://www.agentcheck.care/.well-known/agent.json
+    http_status: 404
+  - url: https://agentcheck.care/a2a
+    http_status: 200
+    note: >-
+      POST of a JSON-RPC 2.0 request for an unsupported method (agent/getAuthenticatedExtendedCard)
+      returned a well-formed JSON-RPC error {"code":-32601,"message":"Method not found: ..."} with no
+      authentication challenge. The endpoint is live, speaks JSON-RPC 2.0, and accepts anonymous
+      requests — a callable agent surface, not a documentation page. No message/send was issued.
+  - url: https://agentcheck.care/openapi.json
+    http_status: 200
+    note: operationIds agent_card__well_known_agent_card_json_get and a2a_endpoint_a2a_post declare the card and the endpoint as part of the REST contract
+agent_card:
+  name: AgentCheck
+  description: >-
+    AI agent diagnostic service. Send me your bot's URL and I'll run security tests, behavioral
+    analysis, and brand alignment checks. Free scans available. Paid tiers for deeper analysis.
+  url: https://agentcheck.care/a2a
+  version: 0.1.0
+  protocol_version: 0.3.0
+  documentation_url: null
+  provider:
+    organization: AgentCheck
+    url: https://agentcheck.care
+  capabilities:
+    streaming: false
+    push_notifications: false
+    state_transition_history: false
+  default_input_modes:
+  - text/plain
+  default_output_modes:
+  - text/plain
+  security_schemes: null
+  skill_count: 2
+  skills:
+  - id: free-scan
+    name: Free Scan
+    description: >-
+      Run a free security scan on your bot. Includes 1 persona, 5 injection tests, PII scan, and
+      system prompt adherence check. Send: 'Run a free scan on https://your-bot-url.com'
+    tags: [security, testing, audit, ai-safety, prompt-injection, vulnerability-scan, bot-diagnostic, LLM, OWASP]
+    examples:
+    - Run a free scan on https://my-bot.example.com
+    input_modes: [text/plain]
+    output_modes: [text/plain]
+  - id: paid-checkup
+    name: Paid Checkup
+    description: >-
+      Run a comprehensive paid checkup. Tiers: Quick Check ($10), Full Check ($25), Deep Check ($75).
+      Usage: 'Test https://your-bot.example.com with Full Check' — returns a payment link to complete
+      before testing begins.
+    tags: [security, testing, audit, paid, ai-safety, prompt-injection, hallucination, bias, PII, brand-alignment, compliance, bot-diagnostic, LLM, OWASP]
+    examples:
+    - Test https://my-bot.example.com with Full Check
+    input_modes: [text/plain]
+    output_modes: [text/plain]
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: 0.3.0
+  preferred_transport: null
+  transport: JSONRPC (0.3.0 default when preferredTransport is absent)
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: false
+  grade_basis: >-
+    All three hard checks pass: capabilities is an OBJECT declaring streaming, pushNotifications and
+    stateTransitionHistory as booleans; protocolVersion is present at the top level ("0.3.0", the
+    shape that version of the spec requires); skills is an ARRAY of two fully-populated skills each
+    carrying id, name, description, tags, examples, inputModes and outputModes. Both optional mode
+    discriminators (defaultInputModes, defaultOutputModes) are declared. preferredTransport is absent,
+    which A2A 0.3.0 defines as defaulting to JSONRPC — the transport the live endpoint was observed
+    speaking — so its absence is within spec rather than a gap. The card is a clean 0.3.0-shaped card;
+    it is not 1.0-shaped (no supportedInterfaces[]), and a 1.0-only reader that ignores the top-level
+    url/protocolVersion pair would find no interface.
+  deviations:
+  - field: preferredTransport
+    observed: absent
+    note: Defaults to JSONRPC under 0.3.0. Recorded because the grading rubric lists it as an optional discriminator; it does not lower the grade.
+  - field: securitySchemes / security
+    observed: absent
+    note: >-
+      The card declares no security scheme, and the live endpoint accepted an anonymous JSON-RPC
+      request without a challenge. That is consistent — the A2A surface is open — but it means the
+      paid-checkup skill's payment step happens out of band (the skill description says a payment link
+      is returned), and an agent has no machine-readable statement of that flow.
+  - field: documentationUrl / iconUrl / supportsAuthenticatedExtendedCard
+    observed: absent
+    note: Optional in 0.3.0. There is no developer documentation page for the A2A surface beyond the Swagger UI at /docs, which describes the REST side.
+  - field: skills[].description
+    observed: prices and usage phrasing embedded in prose
+    note: >-
+      The tier prices ($10/$25/$75) and the exact message an agent should send live inside the skill
+      description strings. They match the machine-readable tiers at GET /api/tiers (see plans/), but an
+      agent reading only the card must parse prose to learn the prices.
+surface_relationship:
+  note: >-
+    AgentCheck publishes two agent-reachable surfaces on one host and no MCP server. A2A: two skills
+    (free-scan, paid-checkup) at https://agentcheck.care/a2a, anonymous JSON-RPC. REST: 35 operations
+    served from the same origin and described at https://agentcheck.care/openapi.json (Swagger UI at
+    /docs, ReDoc at /redoc), of which the checkup, checkout, tiers, free-scan-pool and report endpoints
+    are the ones the A2A skills front. The A2A endpoint and its card are themselves operations in that
+    REST contract. The product is itself an A2A CONSUMER: it tests other people's A2A agents and
+    OpenAI-compatible chat endpoints, which is why its home page links to google.github.io/A2A.

@@ -1,0 +1,141 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the AgentCheck API
+  version: 1.0.0
+extends: ../openapi/agentcheck-care-openapi.yml
+x-generated: '2026-09-19'
+x-method: generated
+x-source: >-
+  Generated from openapi/_original/agentcheck-care-openapi.json (served at https://agentcheck.care/openapi.json,
+  HTTP 200, 2026-09-19) plus the probed artifacts in this repo. Captures API Evangelist annotations - the
+  security scheme the live API enforces, tags the FastAPI document omits, the observed rate-limit and
+  quota surface - without mutating the provider's contract.
+actions:
+- target: $.info
+  description: Give the document a description and the discovery links the served document lacks.
+  update:
+    description: >-
+      AgentCheck's checkup API - start free or paid diagnostic checkups of AI bots, follow progress over
+      SSE, fetch scored reports, and reach the same service over A2A. Served from https://agentcheck.care.
+    x-agent-card: https://agentcheck.care/.well-known/agent-card.json
+    x-a2a-endpoint: https://agentcheck.care/a2a
+    x-tier-catalog: https://agentcheck.care/api/tiers
+    x-terms-of-service: https://agentcheck.care/terms
+    x-privacy-policy: https://agentcheck.care/privacy
+    x-health: https://agentcheck.care/api/health
+- target: $.info
+  description: Record the published quota limits, which live in the terms and a live counter rather than in the contract.
+  update:
+    x-rate-limit:
+      free_scan_pool: 30 per week, shared across all users
+      free_scans_per_user: 2 per week
+      signal_endpoint: GET /api/free-scans
+      headers: none observed
+      docs: https://agentcheck.care/terms
+- target: $.components
+  description: Declare the API-key scheme the live API enforces on the credits endpoint (401 "Missing X-API-Key header" observed 2026-09-19); the served document declares no securitySchemes.
+  update:
+    securitySchemes:
+      ApiKeyAuth:
+        type: apiKey
+        in: header
+        name: X-API-Key
+        description: Observed on GET /api/credits/balance. Issuance is undocumented.
+- target: $.paths['/api/credits/balance'].get
+  description: Bind the observed scheme to the one operation that demands it.
+  update:
+    security:
+    - ApiKeyAuth: []
+    tags: [Credits]
+- target: $.paths['/api/stats/internal'].get
+  description: Mark the operator-only endpoint (401 {"error":"Unauthorized"} anonymously; description says ADMIN_STATS_TOKEN).
+  update:
+    tags: [Internal]
+    x-internal: true
+- target: $.paths['/api/tiers'].get
+  update: {tags: [Plans]}
+- target: $.paths['/api/free-scans'].get
+  update: {tags: [Free Scan Pool]}
+- target: $.paths['/api/free-scan-status'].get
+  update: {tags: [Free Scan Pool]}
+- target: $.paths['/api/stats/public'].get
+  update: {tags: [Stats]}
+- target: $.paths['/api/health'].get
+  update: {tags: [Health]}
+- target: $.paths['/api/validate-bot'].post
+  update: {tags: [Checkups]}
+- target: $.paths['/api/validate-bot/'].post
+  update: {tags: [Checkups], x-duplicate-of: validate_bot_api_validate_bot_post}
+- target: $.paths['/api/checkup'].post
+  update: {tags: [Checkups]}
+- target: $.paths['/api/checkup/'].post
+  update: {tags: [Checkups], x-duplicate-of: start_checkup_api_checkup_post}
+- target: $.paths['/api/checkup'].get
+  update: {tags: [Checkups], x-redirect-guard: true}
+- target: $.paths['/api/checkup/'].get
+  update: {tags: [Checkups], x-redirect-guard: true}
+- target: $.paths['/api/checkup/{checkup_id}/stream'].get
+  update:
+    tags: [Checkups]
+    x-streaming: server-sent-events
+    description: Server-sent-events stream of checkup progress; the /checkup/{checkup_id} HTML page is a client of this stream.
+- target: $.paths['/api/checkup/{checkup_id}/report'].get
+  update: {tags: [Reports]}
+- target: $.paths['/report/{checkup_id}'].get
+  update: {tags: [Reports], x-auth: magic-link token and optional access code in the query string}
+- target: $.paths['/checkup/{checkup_id}'].get
+  update: {tags: [Pages]}
+- target: $.paths['/api/checkout'].post
+  update: {tags: [Checkout]}
+- target: $.paths['/api/checkout/'].post
+  update: {tags: [Checkout], x-duplicate-of: create_checkout_api_checkout_post}
+- target: $.paths['/api/checkout'].get
+  update: {tags: [Checkout]}
+- target: $.paths['/api/checkout/success'].get
+  update: {tags: [Checkout], x-stripe-redirect: true}
+- target: $.paths['/api/checkout/cancel'].get
+  update: {tags: [Checkout], x-stripe-redirect: true}
+- target: $.paths['/api/stripe-webhook'].post
+  update: {tags: [Checkout], x-inbound-webhook: stripe}
+- target: $.paths['/api/stripe-webhook/'].post
+  update: {tags: [Checkout], x-inbound-webhook: stripe, x-duplicate-of: stripe_webhook_api_stripe_webhook_post}
+- target: $.paths['/exam/{token}'].get
+  update: {tags: [Exam Mode]}
+- target: $.paths['/exam/{token}/status'].get
+  update: {tags: [Exam Mode]}
+- target: $.paths['/exam/{token}/relaunch'].post
+  update: {tags: [Exam Mode]}
+- target: $.paths['/exam/{token}/v1/chat/completions'].post
+  update:
+    tags: [Exam Mode]
+    x-compatible-with: OpenAI Chat Completions request/response shape (declared in the operation description)
+- target: $.paths['/a2a'].post
+  update: {tags: [A2A], x-protocol: A2A 0.3.0 JSON-RPC 2.0}
+- target: $.paths['/.well-known/agent-card.json'].get
+  update: {tags: [A2A]}
+- target: $.paths['/'].get
+  update: {tags: [Pages]}
+- target: $.paths['/privacy'].get
+  update: {tags: [Pages]}
+- target: $.paths['/terms'].get
+  update: {tags: [Pages]}
+- target: $.paths['/robots.txt'].get
+  update: {tags: [Pages]}
+- target: $.paths['/sitemap.xml'].get
+  update: {tags: [Pages]}
+- target: $
+  description: Declare the tag set the overlay introduces.
+  update:
+    tags:
+    - {name: Checkups, description: Validate a target bot and start a checkup}
+    - {name: Checkout, description: Stripe Checkout for paid tiers}
+    - {name: Reports, description: Scored report retrieval}
+    - {name: Exam Mode, description: Reverse-connection mode where the customer's bot calls AgentCheck}
+    - {name: A2A, description: Agent-to-Agent card and endpoint}
+    - {name: Plans, description: Tier catalog}
+    - {name: Free Scan Pool, description: Weekly free-scan quota}
+    - {name: Credits, description: API-key credit balance}
+    - {name: Stats, description: Public aggregate statistics}
+    - {name: Health, description: Liveness}
+    - {name: Pages, description: HTML pages served by the same app}
+    - {name: Internal, description: Operator-only}

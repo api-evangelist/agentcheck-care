@@ -1,0 +1,32 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  npm registry search (registry.npmjs.org/-/v1/search?text=agentcheck), PyPI (pypi.org/pypi/agentcheck/json),
+  GitHub repository search for "agentcheck.care" and "agentcheckup", and the provider's own site, 2026-09-19.
+package_count: 0
+packages: []
+note: >-
+  AgentCheck publishes no client library, CLI or SDK. Every registry hit for the name belongs to someone
+  else: PyPI `agentcheck` 0.1.0 is "Trace · Replay · Test your AI agents" from github.com/agentcheck/agentcheck;
+  npm `@agentcheck/core` and `@agentcheck/cli` are emreordu/agentcheck (coding-agent change verification);
+  `agentcheck-core`, `@eshaank08/agentcheck`, `@uchit/agentcheck` and `agentcheck-sdk` are four further
+  unrelated projects. None names agentcheck.care, and the site links no GitHub organization. The product's
+  own integration story is the reverse of an SDK: the customer's bot calls AgentCheck's generated
+  OpenAI-compatible exam URL, or an agent calls the A2A endpoint.
+searched:
+- registry: npm
+  query: agentcheck
+  hits: 9
+  first_party: 0
+- registry: pypi
+  package: agentcheck
+  status: 200
+  first_party: false
+  note: home page github.com/agentcheck/agentcheck, author "AgentCheck Contributors" — a different project
+- registry: pypi
+  package: agentcheckup
+  status: 404
+- registry: github
+  query: agentcheck.care
+  hits: 4
+  first_party: 0

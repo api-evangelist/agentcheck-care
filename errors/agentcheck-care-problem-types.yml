@@ -1,0 +1,82 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/_original/agentcheck-care-openapi.json
+probed: live anonymous responses from https://agentcheck.care on 2026-09-19
+format: fastapi-detail
+envelope:
+  schema: >-
+    HTTPValidationError (422) / ad-hoc {"detail": string} (401, 404) / {"error": string} (401 on internal stats)
+  media_type: application/json
+  fields:
+  - name: detail
+    description: On 422, an array of ValidationError objects; on other statuses observed, a human-readable string.
+  - name: detail[].loc
+    description: Path to the offending field, e.g. ["body","bot_url"].
+  - name: detail[].msg
+    description: Human-readable validation message.
+  - name: detail[].type
+    description: Pydantic error type slug.
+  - name: detail[].input
+    description: The offending input value (echoed back).
+  - name: detail[].ctx
+    description: Optional context object.
+  note: >-
+    The contract declares only 200 and 422 for every operation. Every other status below was observed on the wire
+    against an unknown id or a missing credential and is NOT declared in the OpenAPI - a generated client will not
+    know about them. Not RFC 9457.
+consistency_gap: >-
+  Two 401 envelopes coexist ({"detail":"Missing X-API-Key header"} on /api/credits/balance,
+  {"error":"Unauthorized"} on /api/stats/internal), and 404s carry three different human strings for the same
+  condition. No type URI, no error code field, no request id header.
+problem_types:
+- status: 422
+  title: Validation Error
+  declared: true
+  occurrences: 20
+  schema: HTTPValidationError
+  operations: every operation with a path, query or body parameter (exam_*, start_checkup_*, create_checkout_*, upgrade_checkout_*, checkout_success_*, stream_progress_*, get_report_*, magic_link_report_*, checkup_progress_page_*)
+  remediation: Fix the field named in detail[].loc; the message in detail[].msg is Pydantic's, so it names the expected type or constraint.
+- status: 401
+  title: Missing X-API-Key header
+  declared: false
+  observed_on: GET /api/credits/balance
+  body: '{"detail":"Missing X-API-Key header"}'
+  remediation: Send X-API-Key. How to obtain one is not published.
+- status: 401
+  title: Unauthorized
+  declared: false
+  observed_on: GET /api/stats/internal
+  body: '{"error":"Unauthorized"}'
+  remediation: Operator-only endpoint (ADMIN_STATS_TOKEN); not for API consumers.
+- status: 404
+  title: Checkup not found
+  declared: false
+  observed_on: GET /api/checkup/{checkup_id}/report
+  body: '{"detail":"Checkup not found"}'
+  remediation: The checkup_id is unknown or the report is not yet persisted; poll the SSE stream first.
+- status: 404
+  title: Report not found
+  declared: false
+  observed_on: GET /report/{checkup_id}
+  body: '{"detail":"Report not found"}'
+  remediation: Use the exact magic-link URL (token and optional code) from the report email or checkout success page.
+- status: 404
+  title: Exam session not found
+  declared: false
+  observed_on: GET /exam/{token}/status
+  body: '{"detail":"Exam session not found"}'
+  remediation: The exam token is unknown or expired; POST /exam/{token}/relaunch recreates an expired PAID session with the same parameters.
+- status: 404
+  title: Not Found
+  declared: false
+  observed_on: any unknown path (e.g. /llms.txt, /.well-known/security.txt)
+  body: '{"detail":"Not Found"}'
+  remediation: Path does not exist; this origin does not soft-200.
+- status: 302
+  title: Redirect
+  declared: false
+  observed_on: GET /api/checkout?tier=...&checkup_id=... (to Stripe or home), GET /api/checkup (stray GET guard, to /)
+  remediation: Follow the Location header; the upgrade endpoint is a browser redirect, not a JSON API.
+undocumented_conditions:
+- Free-scan pool exhausted (30/week) or per-user limit (2/week) reached - the status code returned is not published; check GET /api/free-scans before POST /api/checkup.
+- Bot unreachable for 5 minutes during a checkup (terms 3.4) - reported through the SSE stream/report, not as an HTTP error on the start call.

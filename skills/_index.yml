@@ -1,0 +1,22 @@
+generated: '2026-09-19'
+method: generated
+source: >-
+  openapi/_original/agentcheck-care-openapi.json (every operationId below was grepped from the served spec),
+  the A2A agent card, GET /api/tiers, and the terms/privacy pages. AgentCheck publishes no skills of its own -
+  /llms.txt, /AGENTS.md and /skills 404 - so these are API Evangelist authored.
+skills:
+- file: agentcheck-care-free-scan.md
+  name: agentcheck-free-scan
+  method: generated
+  description: Check free-scan quota, validate a target bot, start a free checkup, follow the SSE stream and fetch the report.
+  operations: 5
+- file: agentcheck-care-paid-checkup.md
+  name: agentcheck-paid-checkup
+  method: generated
+  description: Pick a paid tier from the live catalog, create a Stripe Checkout session, and retrieve the report after payment - with the refund and retry rules an agent must respect.
+  operations: 5
+- file: agentcheck-care-a2a-request.md
+  name: agentcheck-a2a-request
+  method: generated
+  description: Reach the same service over A2A - read the card, send a message/send request for a free scan or a paid checkup, and handle the payment-link reply.
+  operations: 2

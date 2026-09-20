@@ -1,0 +1,89 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/_original/agentcheck-care-openapi.json
+summary: >-
+  The contract declares only two request schemas (CheckupRequest, CheckoutRequest) and no response schemas -
+  every 200 is an untyped "Successful Response". The entity graph below is therefore derived from the path
+  structure and identifiers (checkup_id, exam token, tier id, magic-link token) and from the response bodies
+  observed anonymously on 2026-09-19 (tiers, free-scan pool, health, stats). Entities are named by what the
+  API addresses, not by schemas the provider published; treat field lists on response entities as observed,
+  not declared.
+id_style:
+  format: opaque string
+  prefixes_published: false
+  note: checkup_id in the path is the primary identifier; the report magic link adds a separate cryptographic token and optional access code; exam mode uses its own token in the path.
+entities:
+- name: Checkup
+  description: One diagnostic run of a bot at a tier. Created free by POST /api/checkup or paid via checkout success.
+  identifiers: [checkup_id]
+  declared_schema: CheckupRequest (request only)
+  request_fields: [bot_type, bot_url, bot_name, model, api_key, website_url, system_prompt, email, tier, view, bot_description, industry, sample_questions, owner_perception_enabled, owner_perception_mode, owner_known_info, owner_private_info, owner_name]
+  relationships:
+  - belongs_to: Tier
+    via: tier
+  - has_one: Report
+    via: checkup_id
+  - has_one: ProgressStream
+    via: checkup_id
+  - has_one: CheckoutSession
+    via: checkup_id
+    note: paid tiers only; GET /api/checkout?checkup_id= upgrades a free checkup
+- name: Report
+  description: Persisted scored result of a Checkup, reachable by magic link.
+  identifiers: [checkup_id, token (query), code (query, optional)]
+  operations: [get_report_api_checkup__checkup_id__report_get, magic_link_report_report__checkup_id__get]
+  relationships:
+  - belongs_to: Checkup
+    via: checkup_id
+- name: ProgressStream
+  description: Server-sent-events stream of a running checkup, consumed by the /checkup/{checkup_id} page.
+  identifiers: [checkup_id]
+  operations: [stream_progress_api_checkup__checkup_id__stream_get, checkup_progress_page_checkup__checkup_id__get]
+  relationships:
+  - belongs_to: Checkup
+    via: checkup_id
+- name: Tier
+  description: Purchasable checkup level. Observed ids free, basic, full, enterprise with name, price and features[].
+  identifiers: [tier]
+  observed_fields: [name, price, features]
+  operations: [get_tiers_api_tiers_get]
+  relationships:
+  - has_many: Checkup
+    via: tier
+- name: CheckoutSession
+  description: Stripe Checkout session created for a paid tier; success callback launches the pipeline.
+  identifiers: [session_id, checkup_id]
+  declared_schema: CheckoutRequest (request only)
+  operations: [create_checkout_api_checkout_post, upgrade_checkout_api_checkout_get, checkout_success_api_checkout_success_get, checkout_cancel_api_checkout_cancel_get, stripe_webhook_api_stripe_webhook_post]
+  relationships:
+  - belongs_to: Tier
+    via: tier
+  - has_one: Checkup
+    via: checkup_id
+- name: ExamSession
+  description: Reverse-connection session where the customer's bot calls AgentCheck's generated OpenAI-compatible URL; can be relaunched from an expired paid session.
+  identifiers: [token]
+  operations: [exam_page_exam__token__get, exam_status_exam__token__status_get, relaunch_exam_exam__token__relaunch_post, chat_completions_exam__token__v1_chat_completions_post]
+  relationships:
+  - has_one: Checkup
+    via: token
+    note: relationship inferred from the relaunch description ("reusing same params"); the linking field is not declared
+- name: FreeScanPool
+  description: Singleton weekly quota shared by all users.
+  observed_fields: [used, max, remaining, reset_in_seconds, reset_label]
+  operations: [free_scans_endpoint_api_free_scans_get, free_scan_status_api_free_scan_status_get]
+- name: CreditBalance
+  description: Credit balance bound to an X-API-Key; issuance undocumented.
+  identifiers: [X-API-Key (header)]
+  operations: [credit_balance_api_credits_balance_get]
+- name: PublicStats
+  description: Aggregate scan statistics; hidden below a threshold.
+  observed_fields: [available, total_scans, threshold]
+  operations: [get_public_stats_api_stats_public_get]
+- name: AgentCard
+  description: The A2A card describing this service's two skills.
+  operations: [agent_card__well_known_agent_card_json_get, a2a_endpoint_a2a_post]
+  see: a2a/agentcheck-care-a2a.yml
+relationships_note: >-
+  There is no expansion, no nesting and no list endpoint - every relationship is traversed by carrying checkup_id
+  (or the exam token) into the next call.

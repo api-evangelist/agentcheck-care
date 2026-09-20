@@ -1,0 +1,106 @@
+generated: '2026-09-19'
+method: probed
+source: live anonymous probes of https://agentcheck.care on 2026-09-19
+derived_from: openapi/_original/agentcheck-care-openapi.json
+docs:
+- https://agentcheck.care/docs
+- https://agentcheck.care/terms
+- https://agentcheck.care/privacy
+base_url: https://agentcheck.care
+media_type: application/json
+auth:
+  style: mostly anonymous; X-API-Key header on the credits endpoint; capability tokens in the path (exam) and query (report magic link)
+  detail: authentication/agentcheck-care-authentication.yml
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  header: null
+  scope: []
+  retention: null
+  description: >-
+    No Idempotency-Key header, no idempotency field and no documented replay semantics on either mutating
+    operation an API consumer calls - POST /api/checkup (starts a free checkup and consumes free-scan quota)
+    and POST /api/checkout (creates a Stripe Checkout session). A retried POST /api/checkup will start a second
+    checkup and burn a second unit of the 2-per-user weekly allowance. The one retry statement that exists is
+    business-level, not protocol-level - terms 3.4 says a paid checkup whose bot was unreachable "can retry with
+    the same payment (the checkup ID remains valid)", and POST /exam/{token}/relaunch re-creates an expired
+    paid exam session with the same parameters.
+  gaps:
+  - No Idempotency-Key on POST /api/checkup or POST /api/checkout.
+  - No documented behaviour for a duplicate submission of the same bot_url.
+reversibility:
+  grade: documented
+  write_surface:
+  - operation: start_checkup_api_checkup_post
+    effect: starts a free checkup; consumes one unit of the weekly free-scan pool and the per-user allowance
+    reversal: none
+    window: null
+    note: No cancel operation exists for a running or completed checkup.
+  - operation: create_checkout_api_checkout_post
+    effect: creates a Stripe Checkout session; charges the card on completion and launches a paid checkup
+    reversal: refund by contacting AgentCheck
+    reversal_operation: null
+    window: null
+    condition: 'Terms 3.3 - full refund "if your checkup fails due to our error (our service crashes, not your bot being unreachable)"; no refunds for low scores.'
+    docs: https://agentcheck.care/terms
+    note: A reversal path exists and is documented, but no window is stated and it is not an API operation. Cancel BEFORE payment is the Stripe Checkout cancel redirect (GET /api/checkout/cancel), which is a no-charge abandonment rather than a reversal.
+  - operation: relaunch_exam_exam__token__relaunch_post
+    effect: creates a new exam session from an expired paid one
+    reversal: none
+    window: null
+  - operation: report deletion (no API operation)
+    effect: reports are retained indefinitely
+    reversal: deletion on request by email
+    window: null
+    fulfilment_time: within 7 business days of the request (privacy 3.2)
+    docs: https://agentcheck.care/privacy
+    note: A fulfilment SLA is not a reversal window; recorded as documented, not verified.
+  summary: >-
+    Reversal paths are documented for the two things that matter to a buyer (a charge and a stored report) but
+    both are human processes with no API operation and no stated window inside which they work, so the grade is
+    documented (0.4), not verified.
+dry_run:
+  supported: partial
+  mechanism: POST /api/validate-bot checks that a target URL is safe and points at a valid A2A or chat-API bot without starting a checkup.
+  note: A validation call, not a dry run of the mutating operation itself; the free tier is a live run, not a sandbox.
+pagination:
+  supported: false
+  note: No list endpoints exist.
+filtering_and_sorting:
+  supported: false
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: false
+request_id_tracing:
+  supported: false
+  note: No request-id or correlation header was observed on any response; Cloudflare's cf-ray is the only per-request identifier and is the CDN's, not the API's.
+versioning:
+  scheme: unversioned paths; version 0.1.0 in info.version, /api/health and the agent card
+  detail: lifecycle/agentcheck-care-lifecycle.yml
+errors:
+  envelope: >-
+    FastAPI {"detail": ...} - array of ValidationError on 422, string otherwise; one {"error": ...} variant
+  media_type: application/json
+  detail: errors/agentcheck-care-problem-types.yml
+rate_limit_signaling:
+  headers: []
+  exhaustion_status: undocumented
+  quota_endpoint: GET /api/free-scans (used/max/remaining/reset_in_seconds)
+  detail: rate-limits/agentcheck-care-rate-limits.yml
+streaming:
+  sse: GET /api/checkup/{checkup_id}/stream
+  a2a_streaming: false (capabilities.streaming false in the agent card)
+trailing_slash:
+  note: validate-bot, checkup, checkout and stripe-webhook are each declared twice, with and without a trailing slash, producing distinct auto-generated operationIds for the same handler. Call the slash-less form.
+caching:
+  agent_card: 'cache-control: public, max-age=60, stale-if-error=3600 observed on /.well-known/agent-card.json'
+  api_json: no cache-control observed on /api/tiers
+security_headers_observed:
+- x-frame-options: SAMEORIGIN
+- x-content-type-options: nosniff
+- x-xss-protection: 1; mode=block
+- hsts: not observed (see security/agentcheck-care-domain-security.yml)

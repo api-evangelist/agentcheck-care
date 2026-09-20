@@ -1,0 +1,49 @@
+generated: '2026-09-19'
+method: searched
+source: https://agentcheck.care/terms
+derived_from: openapi/_original/agentcheck-care-openapi.json
+docs:
+- https://agentcheck.care/terms
+- https://agentcheck.care/api/health
+versioning:
+  scheme: unversioned paths; a single version string in the document and the health endpoint
+  current_version: 0.1.0
+  spec_url: https://agentcheck.care/openapi.json
+  base_url: https://agentcheck.care
+  policy_published: false
+  note: >-
+    info.version is "0.1.0", GET /api/health returns {"status":"ok","version":"0.1.0"}, and the agent
+    card's version is also 0.1.0. Paths are unversioned (/api/checkup). The only "v1" in the contract is
+    the OpenAI-compatible path shape /exam/{token}/v1/chat/completions, which mirrors OpenAI's URL rather
+    than versioning this API. No versioning policy is published.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: >-
+    No operation in the contract carries deprecated: true. Six paths are declared twice, with and without
+    a trailing slash (validate-bot, checkup, checkout, stripe-webhook), which is FastAPI redirect-slash
+    handling surfacing as duplicate operationIds rather than a deprecation.
+  change_notice: >-
+    Terms section 7: "We may perform maintenance, update tests, or modify scoring methodology at any time.
+    We will try to provide advance notice for changes that materially affect reports." No notice period
+    is stated.
+sla:
+  published: false
+  availability: >-
+    Terms section 7 - "We aim for high availability but do not guarantee uptime."
+  support_commitment: null
+status_page:
+  present: false
+  health_endpoint: https://agentcheck.care/api/health
+  note: No status page. The health endpoint is the only liveness signal and it is unauthenticated.
+changelog:
+  present: false
+  note: >-
+    No changelog page, feed or JSON document was found; the terms and privacy pages carry a
+    "Last updated: March 9, 2026" date and nothing else is dated.
+retention:
+  reports: Retained indefinitely unless deletion is requested; deletion within 7 business days of a request (privacy 3.2-3.3). Automatic expiry is described as possible in future "with advance notice".
+  api_keys_supplied_by_customers: Held in memory for the test session only, never written to disk (privacy 1.3).

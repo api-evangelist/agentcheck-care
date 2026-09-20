@@ -1,0 +1,64 @@
+generated: '2026-09-19'
+method: searched
+source: https://agentcheck.care/terms
+docs:
+- https://agentcheck.care/terms
+- https://agentcheck.care/privacy
+- https://agentcheck.care/api/free-scans
+limit_count: 2
+summary: >-
+  Two published limits, both on the free tier and both quota-shaped rather than requests-per-second: a
+  shared pool of 30 free scans per week across all users, and 2 free scans per week per individual user
+  (terms section 3.1). The pool is exposed live and anonymously at GET /api/free-scans as {used, max,
+  remaining, reset_in_seconds, reset_label} — observed 2026-09-19 as max 30, remaining 30, reset in ~26h.
+  The privacy policy (1.4) states IP addresses are used for "server-side rate limiting" and that Cloudflare
+  bot management fronts the origin, but no numeric request limit, window, or exhaustion status is
+  published for the REST API, and no RateLimit-*/X-RateLimit-*/Retry-After headers were observed on
+  anonymous 200 responses from /api/tiers, /api/free-scans or the agent card.
+rate_limits:
+- name: Free scan global pool
+  scope: global (shared across all users)
+  limit: 30
+  window: 1 week
+  metric: free checkups
+  burst: null
+  applies_to:
+  - POST /api/checkup (tier "free")
+  - A2A skill free-scan
+  signal: >-
+    GET /api/free-scans returns used/max/remaining/reset_in_seconds; the home page shows the same counter
+    and an "exhausted" timer
+  source: https://agentcheck.care/terms
+- name: Free scans per user
+  scope: per-user
+  limit: 2
+  window: 1 week
+  metric: free checkups
+  burst: null
+  applies_to:
+  - POST /api/checkup (tier "free")
+  - A2A skill free-scan
+  source: https://agentcheck.care/terms
+  note: >-
+    How a "user" is identified without login is not published; the privacy policy names IP address as
+    the rate-limiting key.
+undocumented:
+- name: IP-based request rate limiting
+  scope: per-ip
+  limit: null
+  window: null
+  source: https://agentcheck.care/privacy
+  note: >-
+    Stated to exist ("IP address - used for rate limiting", privacy 1.4); no numbers published.
+- name: Bot connection window during a checkup
+  limit: 5 minutes
+  source: https://agentcheck.care/terms
+  note: Not a request limit — the time AgentCheck will keep trying to reach the bot under test before the checkup fails (terms 3.4).
+headers:
+  observed: []
+  exhaustion_status: undocumented
+  note: >-
+    Observed response headers on anonymous JSON responses were content-type, server: cloudflare,
+    x-frame-options, x-content-type-options, x-xss-protection and (on the card) cache-control. No rate-limit
+    signaling header of any family. An agent has to poll /api/free-scans to learn whether a free scan will
+    be accepted.

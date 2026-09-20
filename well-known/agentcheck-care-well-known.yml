@@ -1,0 +1,123 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live GET probes of the named /.well-known/* path list plus /apis.json and /apis.yml on agentcheck.care,
+  www.agentcheck.care and agentcheck.clinic, 2026-09-19. Every row below is a request that was issued;
+  every status is the one returned.
+summary:
+  hosts_probed: 3
+  paths_probed: 42
+  documents_served: 1
+  note: >-
+    One real well-known document: the A2A Agent Card at /.well-known/agent-card.json, served on the apex
+    and on www (agentcheck.clinic 301s to the apex copy). Every other path in the closed list — security.txt,
+    openid-configuration, oauth-authorization-server, oauth-protected-resource, api-catalog, ai-plugin.json,
+    ucp.json, acp.json, aauth-resource.json, apis.json, /apis.json, /apis.yml — returns a genuine JSON 404
+    ({"detail":"Not Found"}, application/json, 22 bytes) from the FastAPI origin. There is no SPA shell
+    false positive on this host. No MCP host exists to probe (mcp.agentcheck.care does not resolve; POST
+    tools/list to /mcp and /api/mcp 404), and the agent card names no authorization server, so the host set
+    is the three domains the company itself names.
+hosts:
+- host: agentcheck.care
+  role: Apex — website, REST API, A2A endpoint and agent card, all one FastAPI origin behind Cloudflare
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/agentcheck-care-agent-card.json
+    standard: A2A 0.3.0 Agent Card (RFC 8615 canonical path)
+    note: Indexed in a2a/agentcheck-care-a2a.yml; the verbatim body lives in a2a/ so it is not duplicated here.
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/api-catalog.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+- host: www.agentcheck.care
+  role: www alias — same origin, byte-identical responses
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/agentcheck-care-agent-card.json
+    standard: A2A 0.3.0 Agent Card
+    note: Byte-identical to the apex copy (1579 bytes).
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/api-catalog.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+- host: agentcheck.clinic
+  role: Second domain named in the privacy policy and terms; 301-redirects every path to https://agentcheck.care/<path>?v=tech (the "technical" view of the same site)
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 301
+    redirect: https://agentcheck.care/.well-known/agent-card.json?v=tech
+    final_status: 200
+    note: Not a distinct document — the redirect target is the apex card.
+  - path: /.well-known/agent.json
+    status: 301
+    final_status: 404
+  - path: /openapi.json
+    status: 301
+    redirect: https://agentcheck.care/openapi.json?v=tech
+    final_status: 200
+  - path: /robots.txt
+    status: 301
+    final_status: 200
+mcp_host_probes:
+- url: https://agentcheck.care/mcp
+  method: POST tools/list
+  status: 404
+- url: https://agentcheck.care/api/mcp
+  method: POST tools/list
+  status: 404
+- url: https://mcp.agentcheck.care/mcp
+  method: POST tools/list
+  status: 0
+  note: host does not resolve

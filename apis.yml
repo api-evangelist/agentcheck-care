@@ -1,18 +1,98 @@
 aid: agentcheck-care
 name: AgentCheck
-description: 'AgentCheck is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  AgentCheck is an AI-agent diagnostic service at agentcheck.care: give it the URL of a bot - an A2A agent
+  or an OpenAI-compatible chat endpoint - and it runs synthetic-persona conversations, OWASP LLM Top 10
+  prompt-injection tests, PII-leakage scans, hallucination, over-refusal, bias and brand-alignment checks
+  across ten modules, then delivers a scored report by magic link. A free scan needs no login; paid one-off
+  tiers (Quick Check $10, Full Check $25, Deep Check $75) are bought through Stripe Checkout. The service is
+  published as a 35-operation FastAPI OpenAPI 3.1.0 contract with Swagger UI and ReDoc, a machine-readable
+  tier catalog and live free-scan quota endpoint, and is itself a conformant A2A 0.3.0 agent with two skills
+  (free-scan, paid-checkup) served from the same host.
+image: https://agentcheck.care/static/images/logo-ac-care.webp
 url: https://raw.githubusercontent.com/api-evangelist/agentcheck-care/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: 'enrichment pass 2026-09-19: full contract discovery run; live OpenAPI and conformant A2A agent card found on agentcheck.care'
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- AI Agents
+- AI Safety
+- Security Testing
+- Prompt Injection
+- LLM Evaluation
+- A2A
+- agent-native
+- Chatbots
+- Compliance
+- Developer Tools
+apis:
+- aid: agentcheck-care:agentcheck-checkup-api
+  name: AgentCheck Checkup API
+  description: >-
+    REST API behind agentcheck.care - start free or paid diagnostic checkups of an AI bot, validate a target
+    URL, read the tier catalog and the shared weekly free-scan pool, follow a running checkup over
+    server-sent events, fetch the scored report, and drive the reverse-connection "exam" mode where the
+    customer's bot calls a generated OpenAI-compatible endpoint. Served as a FastAPI OpenAPI 3.1.0 document
+    with no declared securitySchemes; most operations are anonymous, the credits endpoint requires
+    X-API-Key.
+  image: https://agentcheck.care/static/images/logo-ac-care.webp
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care
+  tags:
+  - AI Safety
+  - Security Testing
+  - LLM Evaluation
+  - Chatbots
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-openapi.yml
+  - type: OpenAPI
+    url: https://agentcheck.care/openapi.json
+    name: Provider-served OpenAPI (verbatim copy in openapi/_original/)
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+  - type: Overlay
+    url: overlays/agentcheck-care-openapi-overlay.yaml
+- aid: agentcheck-care:agentcheck-a2a-agent
+  name: AgentCheck A2A Agent
+  description: >-
+    Agent2Agent (A2A 0.3.0) surface of the same service - a conformant agent card at
+    /.well-known/agent-card.json declaring two text/plain skills, free-scan and paid-checkup, and an anonymous
+    JSON-RPC 2.0 endpoint at /a2a. The paid skill returns a Stripe payment link that a human completes before
+    testing begins. Listed on a2aregistry.org, which is how the company entered this catalog.
+  image: https://agentcheck.care/static/images/logo-ac-care.webp
+  humanURL: https://agentcheck.care/
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - A2A
+  - agent-native
+  - AI Agents
+  properties:
+  - type: AgentCard
+    url: a2a/agentcheck-care-a2a.yml
+  - type: AgentCard
+    url: https://agentcheck.care/.well-known/agent-card.json
+    name: Provider-served agent card
+  - type: Documentation
+    url: https://agentcheck.care/docs
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -21,3 +101,58 @@ maintainers:
 common:
 - type: Website
   url: https://agentcheck.care/
+- type: Documentation
+  url: https://agentcheck.care/docs
+- type: APIReference
+  url: https://agentcheck.care/redoc
+- type: Pricing
+  url: https://agentcheck.care/#pricing
+- type: TermsOfService
+  url: https://agentcheck.care/terms
+- type: PrivacyPolicy
+  url: https://agentcheck.care/privacy
+- type: Support
+  url: mailto:hello@agentcheck.care
+- type: AgentCard
+  url: a2a/agentcheck-care-a2a.yml
+- type: WellKnown
+  url: well-known/agentcheck-care-well-known.yml
+- type: MCPServer
+  url: mcp/agentcheck-care-mcp.yml
+- type: LLMsTxt
+  url: llms/agentcheck-care-llms.txt
+- type: Overlay
+  url: overlays/agentcheck-care-openapi-overlay.yaml
+- type: Conformance
+  url: conformance/agentcheck-care-conformance.yml
+- type: ErrorCatalog
+  url: errors/agentcheck-care-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/agentcheck-care-lifecycle.yml
+- type: Authentication
+  url: authentication/agentcheck-care-authentication.yml
+- type: Conventions
+  url: conventions/agentcheck-care-conventions.yml
+- type: DomainSecurity
+  url: security/agentcheck-care-domain-security.yml
+- type: RegulatoryPosture
+  url: regulatory/agentcheck-care-regulatory-posture.yml
+- type: DataSubjectRequest
+  url: https://agentcheck.care/privacy
+- type: Subprocessors
+  url: https://agentcheck.care/privacy
+- type: DataModel
+  url: data-model/agentcheck-care-data-model.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Plans
+  url: plans/agentcheck-care-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/agentcheck-care-rate-limits.yml
+- type: Packages
+  url: packages/agentcheck-care-packages.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 23
+  pass: local-v3
