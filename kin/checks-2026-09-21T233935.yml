@@ -2,15 +2,15 @@
 kin_checks:
   slug: agentcheck-care
   schema_version: 0.22.0
-  scored_at: '2026-09-19'
-  run_ts: 2026-09-19T193153
+  scored_at: '2026-09-21'
+  run_ts: 2026-09-21T233935
   note: Actionable checks (missed + partial) in `checks`, plus the ids that did not
     apply in `na`. Everything else in rubric/scoring-0.22.0.yml was earned; counts
     below let you verify that.
   counts:
     total: 136
-    earned: 38
-    partial: 5
+    earned: 37
+    partial: 6
     missed: 67
     na: 26
   checks:
@@ -31,8 +31,6 @@ kin_checks:
   - id: info_complete
     status: missed
     detail: 0 of 1 openapi documents pass
-  - id: servers_resolvable
-    status: missed
   - id: operations_tagged
     status: missed
     detail: 0 of 1 openapi documents pass
@@ -137,6 +135,8 @@ kin_checks:
     status: missed
   - id: agentic_access
     status: missed
+  - id: mcp_server
+    status: missed
   - id: idempotency
     status: missed
   - id: openapi_examples
@@ -157,6 +157,9 @@ kin_checks:
     status: missed
   - id: agentic_commerce
     status: missed
+  - id: agent_skill_present
+    status: partial
+    earned: 0.75
   - id: pricing_link
     status: partial
     earned: 2.0
@@ -164,10 +167,6 @@ kin_checks:
   - id: reversibility_documented
     status: partial
     earned: 2.4
-    detail: 'grade: documented'
-  - id: mcp_server
-    status: partial
-    earned: 4.8
     detail: 'grade: documented'
   - id: auth_clarity
     status: partial
@@ -177,6 +176,10 @@ kin_checks:
     status: partial
     earned: 3.5
     detail: 'grade: documented'
+  - id: agent_skills
+    status: partial
+    earned: 1.25
+    detail: 'authorship: derived'
   na:
   - asyncapi_3_x
   - channels_defined
