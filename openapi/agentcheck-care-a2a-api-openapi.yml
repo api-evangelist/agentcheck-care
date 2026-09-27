@@ -1,0 +1,32 @@
+openapi: 3.2.0
+info:
+  title: Agentcheck Care A2a API
+  version: 0.1.0
+  description: 'Operations tagged A2a across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+tags:
+- name: A2a
+paths:
+  /a2a:
+    post:
+      summary: A2A Endpoint
+      description: 'Handle A2A JSON-RPC 2.0 message/send requests.
+
+
+        This is the main bot-to-bot entry point. External agents send
+
+        message/send with a text message describing what they want.'
+      operationId: a2a_endpoint_a2a_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - A2a
+x-refined-from:
+- agentcheck-care-openapi.json
+- agentcheck-care-openapi.yml

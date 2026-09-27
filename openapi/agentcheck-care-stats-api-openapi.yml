@@ -1,0 +1,40 @@
+openapi: 3.2.0
+info:
+  title: Agentcheck Care Stats API
+  version: 0.1.0
+  description: 'Operations tagged Stats across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+tags:
+- name: Stats
+paths:
+  /api/stats/public:
+    get:
+      summary: Get Public Stats
+      description: 4 numbers for the landing page. No auth. Hidden below threshold.
+      operationId: get_public_stats_api_stats_public_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Stats
+  /api/stats/internal:
+    get:
+      summary: Get Internal Stats
+      description: Full analytics breakdown. Requires ADMIN_STATS_TOKEN.
+      operationId: get_internal_stats_api_stats_internal_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Stats
+x-refined-from:
+- agentcheck-care-openapi.json
+- agentcheck-care-openapi.yml

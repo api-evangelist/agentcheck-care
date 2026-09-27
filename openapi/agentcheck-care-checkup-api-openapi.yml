@@ -1,0 +1,290 @@
+openapi: 3.2.0
+info:
+  title: Agentcheck Care Checkup API
+  version: 0.1.0
+  description: 'Operations tagged Checkup across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+tags:
+- name: Checkup
+paths:
+  /api/checkup/:
+    get:
+      summary: Checkup Get Redirect
+      description: Catch stray GETs (e.g. from Cloudflare prefetch) — redirect to homepage.
+      operationId: checkup_get_redirect_api_checkup__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Checkup
+    post:
+      summary: Start Checkup
+      description: Start a checkup. Free tier only — paid tiers go through /api/checkout.
+      operationId: start_checkup_api_checkup__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckupRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkup
+  /api/checkup:
+    get:
+      summary: Checkup Get Redirect
+      description: Catch stray GETs (e.g. from Cloudflare prefetch) — redirect to homepage.
+      operationId: checkup_get_redirect_api_checkup_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Checkup
+    post:
+      summary: Start Checkup
+      description: Start a checkup. Free tier only — paid tiers go through /api/checkout.
+      operationId: start_checkup_api_checkup_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckupRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkup
+  /api/checkup/{checkup_id}/stream:
+    get:
+      summary: Stream Progress
+      operationId: stream_progress_api_checkup__checkup_id__stream_get
+      parameters:
+      - name: checkup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkup
+  /api/checkup/{checkup_id}/report:
+    get:
+      summary: Get Report
+      operationId: get_report_api_checkup__checkup_id__report_get
+      parameters:
+      - name: checkup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkup
+  /checkup/{checkup_id}:
+    get:
+      summary: Checkup Progress Page
+      description: Serve an HTML page that connects to the SSE stream for live progress.
+      operationId: checkup_progress_page_checkup__checkup_id__get
+      parameters:
+      - name: checkup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkup
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    CheckupRequest:
+      properties:
+        bot_type:
+          type: string
+          title: Bot Type
+          default: a2a
+        bot_url:
+          type: string
+          title: Bot Url
+          default: ''
+        bot_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bot Name
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        api_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Key
+        website_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Website Url
+        system_prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Prompt
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        tier:
+          type: string
+          title: Tier
+          default: free
+        view:
+          type: string
+          title: View
+          default: friendly
+        bot_description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bot Description
+        industry:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Industry
+        sample_questions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sample Questions
+        owner_perception_enabled:
+          type: boolean
+          title: Owner Perception Enabled
+          default: false
+        owner_perception_mode:
+          type: string
+          title: Owner Perception Mode
+          default: company
+        owner_known_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Known Info
+        owner_private_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Private Info
+        owner_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Name
+      type: object
+      title: CheckupRequest
+      description: Request body for POST /api/checkup.
+x-refined-from:
+- agentcheck-care-openapi.json
+- agentcheck-care-openapi.yml

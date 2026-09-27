@@ -1,0 +1,259 @@
+openapi: 3.2.0
+info:
+  title: Agentcheck Care Checkout API
+  version: 0.1.0
+  description: 'Operations tagged Checkout across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+tags:
+- name: Checkout
+paths:
+  /api/checkout:
+    get:
+      summary: Upgrade Checkout
+      description: 'Create a Stripe checkout for upgrading an existing free scan.
+
+
+        The upgrade link carries the checkup_id from the free report, so the
+
+        user does NOT have to re-enter their bot URL. We look up the original
+
+        checkup data and create a new checkout session with the same bot info.'
+      operationId: upgrade_checkout_api_checkout_get
+      parameters:
+      - name: tier
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Tier
+      - name: checkup_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkout
+    post:
+      summary: Create Checkout
+      description: Create a Stripe Checkout session and return the redirect URL.
+      operationId: create_checkout_api_checkout_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkout
+  /api/checkout/:
+    post:
+      summary: Create Checkout
+      description: Create a Stripe Checkout session and return the redirect URL.
+      operationId: create_checkout_api_checkout__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkout
+  /api/checkout/success:
+    get:
+      summary: Checkout Success
+      description: Handle Stripe redirect after successful payment. Launches the pipeline.
+      operationId: checkout_success_api_checkout_success_get
+      parameters:
+      - name: session_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: checkup_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Checkout
+  /api/checkout/cancel:
+    get:
+      summary: Checkout Cancel
+      description: Handle Stripe redirect after cancelled payment.
+      operationId: checkout_cancel_api_checkout_cancel_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Checkout
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    CheckoutRequest:
+      properties:
+        bot_type:
+          type: string
+          title: Bot Type
+          default: a2a
+        bot_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bot Url
+        bot_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Bot Name
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        api_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Api Key
+        website_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Website Url
+        system_prompt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: System Prompt
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        tier:
+          type: string
+          title: Tier
+          default: basic
+        view:
+          type: string
+          title: View
+          default: friendly
+        owner_perception_enabled:
+          type: boolean
+          title: Owner Perception Enabled
+          default: false
+        owner_perception_mode:
+          type: string
+          title: Owner Perception Mode
+          default: company
+        owner_known_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Known Info
+        owner_private_info:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Private Info
+        owner_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Name
+      type: object
+      title: CheckoutRequest
+      description: Request body for POST /api/checkout (Stripe).
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+x-refined-from:
+- agentcheck-care-openapi.json
+- agentcheck-care-openapi.yml

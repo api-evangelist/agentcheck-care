@@ -1,0 +1,27 @@
+openapi: 3.2.0
+info:
+  title: Agentcheck Care Free Scans API
+  version: 0.1.0
+  description: 'Operations tagged Free Scans across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+tags:
+- name: Free Scans
+paths:
+  /api/free-scans:
+    get:
+      summary: Free Scans Endpoint
+      description: Return weekly free scan pool status (shared across all users).
+      operationId: free_scans_endpoint_api_free_scans_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Free Scans
+x-refined-from:
+- agentcheck-care-openapi.json
+- agentcheck-care-openapi.yml

@@ -1,0 +1,164 @@
+openapi: 3.2.0
+info:
+  title: Agentcheck Care Exam API
+  version: 0.1.0
+  description: 'Operations tagged Exam across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+tags:
+- name: Exam
+paths:
+  /exam/{token}/v1/chat/completions:
+    post:
+      summary: Chat Completions
+      description: 'OpenAI-compatible chat endpoint that bridges bot answers to the orchestrator.
+
+
+        First request: bot connects, we return the first question (no inbox push).
+
+        Subsequent: bot''s answer goes to inbox, next question returned from outbox.
+
+        On RESET: ack the adapter, clear history, wait for next question.
+
+        On COMPLETE: final message with report link returned.'
+      operationId: chat_completions_exam__token__v1_chat_completions_post
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Exam
+  /exam/{token}:
+    get:
+      summary: Exam Page
+      description: Show exam instructions with endpoint URL, code examples, and countdown.
+      operationId: exam_page_exam__token__get
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Exam
+  /exam/{token}/status:
+    get:
+      summary: Exam Status
+      description: JSON status for polling from the instructions page.
+      operationId: exam_status_exam__token__status_get
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Exam
+  /exam/{token}/relaunch:
+    post:
+      summary: Relaunch Exam
+      description: Create a new exam session from an expired paid one, reusing same params.
+      operationId: relaunch_exam_exam__token__relaunch_post
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Exam
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+x-refined-from:
+- agentcheck-care-openapi.json
+- agentcheck-care-openapi.yml

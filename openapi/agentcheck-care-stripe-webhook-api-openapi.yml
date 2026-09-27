@@ -1,0 +1,40 @@
+openapi: 3.2.0
+info:
+  title: Agentcheck Care Stripe Webhook API
+  version: 0.1.0
+  description: 'Operations tagged Stripe Webhook across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+tags:
+- name: Stripe Webhook
+paths:
+  /api/stripe-webhook/:
+    post:
+      summary: Stripe Webhook
+      description: Handle Stripe webhook events (payment confirmation).
+      operationId: stripe_webhook_api_stripe_webhook__post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Stripe Webhook
+  /api/stripe-webhook:
+    post:
+      summary: Stripe Webhook
+      description: Handle Stripe webhook events (payment confirmation).
+      operationId: stripe_webhook_api_stripe_webhook_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Stripe Webhook
+x-refined-from:
+- agentcheck-care-openapi.json
+- agentcheck-care-openapi.yml

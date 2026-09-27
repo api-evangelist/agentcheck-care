@@ -1,0 +1,98 @@
+openapi: 3.2.0
+info:
+  title: Agentcheck Care Report API
+  version: 0.1.0
+  description: 'Operations tagged Report across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://agentcheck.care
+  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
+tags:
+- name: Report
+paths:
+  /report/{checkup_id}:
+    get:
+      summary: Magic Link Report
+      description: Serve a persisted report via magic link token + optional access code.
+      operationId: magic_link_report_report__checkup_id__get
+      parameters:
+      - name: checkup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Checkup Id
+      - name: token
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Token
+      - name: code
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Code
+      - name: format
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Format
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Report
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+x-refined-from:
+- agentcheck-care-openapi.json
+- agentcheck-care-openapi.yml

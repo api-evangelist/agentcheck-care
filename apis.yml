@@ -25,34 +25,58 @@ tags:
 - Prompt Injection
 - LLM Evaluation
 - A2A
+- Agent-Native
+- Chatbots
+- Compliance
+- Developer Tools
+tags_raw:
+- AI Agents
+- AI Safety
+- Security Testing
+- Prompt Injection
+- LLM Evaluation
+- A2A
 - agent-native
 - Chatbots
 - Compliance
 - Developer Tools
 apis:
-- aid: agentcheck-care:agentcheck-checkup-api
-  name: AgentCheck Checkup API
+- aid: agentcheck-care:agentcheck-a2a-agent
+  name: AgentCheck A2A Agent
   description: >-
-    REST API behind agentcheck.care - start free or paid diagnostic checkups of an AI bot, validate a target
-    URL, read the tier catalog and the shared weekly free-scan pool, follow a running checkup over
-    server-sent events, fetch the scored report, and drive the reverse-connection "exam" mode where the
-    customer's bot calls a generated OpenAI-compatible endpoint. Served as a FastAPI OpenAPI 3.1.0 document
-    with no declared securitySchemes; most operations are anonymous, the credits endpoint requires
-    X-API-Key.
+    Agent2Agent (A2A 0.3.0) surface of the same service - a conformant agent card at /.well-known/agent-card.json
+    declaring two text/plain skills, free-scan and paid-checkup, and an anonymous JSON-RPC 2.0 endpoint
+    at /a2a. The paid skill returns a Stripe payment link that a human completes before testing begins.
+    Listed on a2aregistry.org, which is how the company entered this catalog.
   image: https://agentcheck.care/static/images/logo-ac-care.webp
-  humanURL: https://agentcheck.care/docs
-  baseURL: https://agentcheck.care
+  humanURL: https://agentcheck.care/
+  baseURL: https://agentcheck.care/a2a
   tags:
-  - AI Safety
-  - Security Testing
-  - LLM Evaluation
-  - Chatbots
+  - A2A
+  - Agent-Native
+  - AI Agents
+  tags_raw:
+  - A2A
+  - agent-native
+  - AI Agents
+  properties:
+  - type: AgentCard
+    url: a2a/agentcheck-care-a2a.yml
+  - type: AgentCard
+    url: https://agentcheck.care/.well-known/agent-card.json
+    name: Provider-served agent card
+  - type: Documentation
+    url: https://agentcheck.care/docs
+- aid: agentcheck-care:agentcheck-care-a2a-api
+  name: AgentCheck A2a API
+  description: The A2a API from AgentCheck — 1 operation(s) for a2a.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - A2a
   properties:
   - type: OpenAPI
-    url: openapi/agentcheck-care-openapi.yml
-  - type: OpenAPI
-    url: https://agentcheck.care/openapi.json
-    name: Provider-served OpenAPI (verbatim copy in openapi/_original/)
+    url: openapi/agentcheck-care-a2a-api-openapi.yml
   - type: Documentation
     url: https://agentcheck.care/docs
   - type: APIReference
@@ -69,30 +93,474 @@ apis:
     url: rate-limits/agentcheck-care-rate-limits.yml
   - type: Plans
     url: plans/agentcheck-care-plans-pricing.yml
-  - type: Overlay
-    url: overlays/agentcheck-care-openapi-overlay.yaml
-- aid: agentcheck-care:agentcheck-a2a-agent
-  name: AgentCheck A2A Agent
-  description: >-
-    Agent2Agent (A2A 0.3.0) surface of the same service - a conformant agent card at
-    /.well-known/agent-card.json declaring two text/plain skills, free-scan and paid-checkup, and an anonymous
-    JSON-RPC 2.0 endpoint at /a2a. The paid skill returns a Stripe payment link that a human completes before
-    testing begins. Listed on a2aregistry.org, which is how the company entered this catalog.
-  image: https://agentcheck.care/static/images/logo-ac-care.webp
-  humanURL: https://agentcheck.care/
+- aid: agentcheck-care:agentcheck-care-agentcheckup-api
+  name: AgentCheck Agent Checkup API
+  description: The AgentCheckup API from AgentCheck — 1 operation(s) for agentcheckup.
+  humanURL: https://agentcheck.care/docs
   baseURL: https://agentcheck.care/a2a
   tags:
-  - A2A
-  - agent-native
-  - AI Agents
+  - AgentCheckup
   properties:
-  - type: AgentCard
-    url: a2a/agentcheck-care-a2a.yml
-  - type: AgentCard
-    url: https://agentcheck.care/.well-known/agent-card.json
-    name: Provider-served agent card
+  - type: OpenAPI
+    url: openapi/agentcheck-care-agentcheckup-api-openapi.yml
   - type: Documentation
     url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-checkout-api
+  name: AgentCheck Checkout API
+  description: The Checkout API from AgentCheck — 4 operation(s) for checkout.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Checkout
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-checkout-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-checkup-api
+  name: AgentCheck Checkup API
+  description: The Checkup API from AgentCheck — 5 operation(s) for checkup.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Checkup
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-checkup-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-credits-api
+  name: AgentCheck Credits API
+  description: The Credits API from AgentCheck — 1 operation(s) for credits.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Credits
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-credits-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-exam-api
+  name: AgentCheck Exam API
+  description: The Exam API from AgentCheck — 4 operation(s) for exam.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Exam
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-exam-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-free-scan-status-api
+  name: AgentCheck Free Scan Status API
+  description: The Free Scan Status API from AgentCheck — 1 operation(s) for free scan status.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Free Scan Status
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-free-scan-status-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-free-scans-api
+  name: AgentCheck Free Scans API
+  description: The Free Scans API from AgentCheck — 1 operation(s) for free scans.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Free Scans
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-free-scans-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-health-api
+  name: AgentCheck Health API
+  description: The Health API from AgentCheck — 1 operation(s) for health.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-health-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-privacy-api
+  name: AgentCheck Privacy API
+  description: The Privacy API from AgentCheck — 1 operation(s) for privacy.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Privacy
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-privacy-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-report-api
+  name: AgentCheck Report API
+  description: The Report API from AgentCheck — 1 operation(s) for report.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Report
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-report-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-robots-txt-api
+  name: AgentCheck Robots.txt API
+  description: The Robots.txt API from AgentCheck — 1 operation(s) for robots.txt.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Robots.txt
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-robots-txt-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-sitemap-xml-api
+  name: AgentCheck Sitemap.xml API
+  description: The Sitemap.xml API from AgentCheck — 1 operation(s) for sitemap.xml.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Sitemap.xml
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-sitemap-xml-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-stats-api
+  name: AgentCheck Stats API
+  description: The Stats API from AgentCheck — 2 operation(s) for stats.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Stats
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-stats-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-stripe-webhook-api
+  name: AgentCheck Stripe Webhook API
+  description: The Stripe Webhook API from AgentCheck — 2 operation(s) for stripe webhook.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Stripe Webhook
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-stripe-webhook-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-terms-api
+  name: AgentCheck Terms API
+  description: The Terms API from AgentCheck — 1 operation(s) for terms.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Terms
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-terms-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-tiers-api
+  name: AgentCheck Tiers API
+  description: The Tiers API from AgentCheck — 1 operation(s) for tiers.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Tiers
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-tiers-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-validate-bot-api
+  name: AgentCheck Validate Bot API
+  description: The Validate Bot API from AgentCheck — 2 operation(s) for validate bot.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - Validate Bot
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-validate-bot-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
+- aid: agentcheck-care:agentcheck-care-well-known-api
+  name: AgentCheck .well Known API
+  description: The .well Known API from AgentCheck — 1 operation(s) for .well known.
+  humanURL: https://agentcheck.care/docs
+  baseURL: https://agentcheck.care/a2a
+  tags:
+  - .well Known
+  properties:
+  - type: OpenAPI
+    url: openapi/agentcheck-care-well-known-api-openapi.yml
+  - type: Documentation
+    url: https://agentcheck.care/docs
+  - type: APIReference
+    url: https://agentcheck.care/redoc
+  - type: Authentication
+    url: authentication/agentcheck-care-authentication.yml
+  - type: Conventions
+    url: conventions/agentcheck-care-conventions.yml
+  - type: ErrorCatalog
+    url: errors/agentcheck-care-problem-types.yml
+  - type: DataModel
+    url: data-model/agentcheck-care-data-model.yml
+  - type: RateLimits
+    url: rate-limits/agentcheck-care-rate-limits.yml
+  - type: Plans
+    url: plans/agentcheck-care-plans-pricing.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -156,3 +624,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 23
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://agentcheck.care/.well-known/agent-card.json"
+  grade: "near-conformant"
+  protocol_version: "0.3.0"
+  control: 404
