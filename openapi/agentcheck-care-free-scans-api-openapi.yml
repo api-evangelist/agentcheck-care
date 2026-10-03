@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Agentcheck Care Free Scans API
+  title: AgentCheckup Free Scans API
   version: 0.1.0
-  description: 'Operations tagged Free Scans across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://agentcheck.care
-  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
 tags:
 - name: Free Scans
 paths:
@@ -22,6 +18,3 @@ paths:
               schema: {}
       tags:
       - Free Scans
-x-refined-from:
-- agentcheck-care-openapi.json
-- agentcheck-care-openapi.yml

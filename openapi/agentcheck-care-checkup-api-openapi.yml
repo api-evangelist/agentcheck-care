@@ -1,11 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Agentcheck Care Checkup API
+  title: AgentCheckup Checkup API
   version: 0.1.0
-  description: 'Operations tagged Checkup across 2 of this provider''s published API definitions: agentcheck-care-openapi.json, agentcheck-care-openapi.yml. Each path carries the servers of the definition it was published in.'
-servers:
-- url: https://agentcheck.care
-  description: Production. Not declared in the served document (FastAPI same-origin default); added by API Evangelist from the origin that serves /openapi.json, /docs and the A2A card whose url is https://agentcheck.care/a2a.
 tags:
 - name: Checkup
 paths:
@@ -285,6 +281,3 @@ components:
       type: object
       title: CheckupRequest
       description: Request body for POST /api/checkup.
-x-refined-from:
-- agentcheck-care-openapi.json
-- agentcheck-care-openapi.yml
