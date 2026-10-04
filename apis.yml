@@ -73,6 +73,8 @@ apis:
   humanURL: https://agentcheck.care/docs
   baseURL: https://agentcheck.care/a2a
   tags:
+  - A2A
+  tags_raw:
   - A2a
   properties:
   - type: OpenAPI
@@ -177,6 +179,8 @@ apis:
   humanURL: https://agentcheck.care/docs
   baseURL: https://agentcheck.care/a2a
   tags:
+  - Credit
+  tags_raw:
   - Credits
   properties:
   - type: OpenAPI
