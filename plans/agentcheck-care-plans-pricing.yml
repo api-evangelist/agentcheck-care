@@ -92,3 +92,43 @@ credits:
     GET /api/credits/balance exists ("Get credit balance for an API key") and answers 401 "Missing X-API-Key
     header" anonymously, so an API-key credit model exists in the code, but no page publishes how to obtain
     a key or what credits cost. Recorded as observed, not as a plan.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - subscription
+  units: []
+  plans:
+  - name: Free Scan
+    access: other
+    model: free
+    model_how: derived
+    units:
+    - other
+    periods:
+    - one-time
+  - name: Quick Check
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - one-time
+  - name: Full Check
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - one-time
+  - name: Deep Check
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - one-time
