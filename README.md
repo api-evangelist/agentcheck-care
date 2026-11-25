@@ -109,26 +109,38 @@ Model Context Protocol servers that expose the API to agents.
 
 OpenAPI overlays, including conversational phrasing for each operation.
 
-- [Agentcheck Care Openapi Overlay](https://apis.io/overlays/agentcheck-care/agentcheck-care-openapi-overlay/)
+- [AgentCheck Openapi Overlay](https://apis.io/overlays/agentcheck-care/agentcheck-care-openapi-overlay/)
+
+#### Governance rules (1)
+
+Spectral rulesets for the provider's contracts.
+
+- [AgentCheck API Rules](https://apis.io/rules/agentcheck-care/agentcheck-care-rules/)
 
 #### Security (2)
 
 Authentication, trust centre, and vulnerability disclosure.
 
-- [Agentcheck Care Authentication](https://apis.io/security/agentcheck-care/agentcheck-care-authentication/)
-- [Agentcheck Care Domain Security](https://apis.io/security/agentcheck-care/agentcheck-care-domain-security/)
+- [AgentCheck Authentication](https://apis.io/security/agentcheck-care/agentcheck-care-authentication/)
+- [AgentCheck Domain Security](https://apis.io/security/agentcheck-care/agentcheck-care-domain-security/)
 
 #### Plans and pricing (1)
 
 Published plans, tiers and prices.
 
-- [Agentcheck Care Plans Pricing](https://apis.io/plans/agentcheck-care/agentcheck-care-plans-pricing/)
+- [AgentCheck Plans Pricing](https://apis.io/plans/agentcheck-care/agentcheck-care-plans-pricing/)
 
 #### Rate limits (1)
 
 Published request limits.
 
-- [Agentcheck Care Rate Limits](https://apis.io/rate-limits/agentcheck-care/agentcheck-care-rate-limits/)
+- [AgentCheck Rate Limits](https://apis.io/rate-limits/agentcheck-care/agentcheck-care-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [AgentCheck Finops](https://apis.io/finops/agentcheck-care/agentcheck-care-finops/)
 
 ## Where to find this API
 
@@ -143,18 +155,18 @@ Links to the company's own pages. This repository publishes no copy of their spe
 
 ## API Evangelist rating
 
-**Kin Score 41.1** — developing · rubric 0.25.0 · scored 2026-10-23
+**Kin Score 41.6** — developing · rubric 0.28.1 · scored 2026-11-21
 
 | Facet | Score |
 |---|---|
 | Discoverability | 66.1 |
-| Contract quality | 37.8 |
-| Contract governance | 18.2 |
-| Operational transparency | 21.1 |
+| Contract quality | 42.0 |
+| Contract governance | 31.8 |
+| Operational transparency | 19.0 |
 | Developer ergonomics | 35.1 |
-| Access clarity | 57.9 |
+| Access clarity | 53.2 |
 
-**Agent readiness 31.4** — agent-ready
+**Agent readiness 30.8** — agent-ready
 
 | Agent-readiness dimension | Result |
 |---|---|
@@ -179,8 +191,12 @@ Links to the company's own pages. This repository publishes no copy of their spe
 | Agentic Commerce | — |
 | Pagination Ratio | na |
 | Operation Distinctiveness | — |
+| MCP Tool Quality | na |
+| Onboarding Descriptor | — |
+| Dns Aid Index | na |
+| Markdown Negotiation | na |
 
-**Regulatory alignment 32.4** — AI & Biometrics
+**Regulatory alignment 26.5** — AI & Biometrics
 
 The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/agentcheck-care/](https://apis.io/providers/agentcheck-care/).
 
